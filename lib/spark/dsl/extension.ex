@@ -1618,7 +1618,7 @@ defmodule Spark.Dsl.Extension do
                     built =
                       case Entity.build(unquote(Macro.escape(entity)), opts, nested_entities) do
                         {:ok, built} ->
-                          built |> put_in([:__spark_meta__][:entity_name], entity_name)
+                          built |> put_in([:__spark_meta__, :entity_name], entity_name)
 
                         {:error, error} ->
                           additional_path =
