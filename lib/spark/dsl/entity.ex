@@ -107,13 +107,14 @@ defmodule Spark.Dsl.Entity do
       ) do
     {before_validate_auto, after_validate_auto} =
       Keyword.split(auto_set_fields || [], Keyword.keys(schema))
-
+    meta = %{explicit_set_keys: Keyword.keys(opts)}
     with {:ok, opts} <-
            OptionsHelpers.validate(Keyword.merge(opts || [], before_validate_auto), schema),
          opts <- Keyword.merge(opts, after_validate_auto),
          opts <- Enum.map(opts, fn {key, value} -> {schema[key][:as] || key, value} end),
          built <- struct(target, opts),
          built <- struct(built, nested_entities),
+         built <- Map.put(built, :__spark_meta__, meta),
          {:ok, built} <- transform(transform, built) do
       case identifier do
         nil ->
